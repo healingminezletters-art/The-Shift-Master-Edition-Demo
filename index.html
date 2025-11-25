@@ -1,0 +1,989 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>The Shift – Demo Edition · Healing Minez</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    :root {
+      --bg: #f5f5f7;
+      --card-bg: #ffffff;
+      --border-subtle: #e0e0e6;
+      --text-main: #333333;
+      --deck-accent: #cab8ff;
+      --deck-accent-soft: #ffc6ff;
+      --deck-accent-deep: #5a4ad6;
+    }
+
+    * {
+      box-sizing: border-box;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont,
+                   "Segoe UI", sans-serif;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      background: radial-gradient(circle at top, #fdf1ff, #f5f5f7);
+      color: var(--text-main);
+      padding: 1rem;
+    }
+
+    .app {
+      width: 100%;
+      max-width: 980px;
+      background: var(--card-bg);
+      border-radius: 22px;
+      box-shadow: 0 22px 60px rgba(0,0,0,0.09);
+      padding: 1.75rem 1.9rem 1.9rem;
+      position: relative;
+      overflow: hidden;
+    }
+
+    header {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .logo-main {
+      width: 64px;
+      height: 64px;
+      border-radius: 16px;
+      object-fit: cover;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25);
+    }
+
+    .header-left {
+      display: flex;
+      align-items: center;
+      gap: 0.8rem;
+      flex-wrap: wrap;
+    }
+
+    .title-block h1 {
+      margin: 0;
+      font-size: 1.6rem;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    .title-block p {
+      margin: 0.25rem 0 0;
+      font-size: 0.9rem;
+      opacity: 0.85;
+    }
+
+    .brand-line {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+      opacity: 0.72;
+      margin-top: 0.25rem;
+    }
+
+    .mode-toggle {
+      display: inline-flex;
+      border-radius: 999px;
+      background: #f3f0ff;
+      padding: 0.15rem;
+      border: 1px solid #e2ddff;
+    }
+
+    .mode-btn {
+      border: none;
+      padding: 0.35rem 0.8rem;
+      border-radius: 999px;
+      background: transparent;
+      font-size: 0.8rem;
+      cursor: pointer;
+      transition: background 0.15s ease, color 0.15s ease, transform 0.1s ease;
+      white-space: nowrap;
+    }
+
+    .mode-btn.active {
+      background: #ffffff;
+      color: var(--deck-accent-deep);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+      transform: translateY(-1px);
+    }
+
+    .demo-ribbon {
+      position: absolute;
+      top: 12px;
+      right: -48px;
+      background: linear-gradient(135deg, #ff9fb0, #ffcf8f);
+      color: #3b2333;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      padding: 0.35rem 3rem;
+      transform: rotate(28deg);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+      z-index: 2;
+    }
+
+    .controls-row {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    .deck-select-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+      font-size: 0.85rem;
+    }
+
+    select {
+      padding: 0.3rem 0.6rem;
+      border-radius: 999px;
+      border: 1px solid #ddd8ff;
+      background: #f7f5ff;
+      font-size: 0.84rem;
+      outline: none;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 3.2fr) minmax(0, 2.3fr);
+      gap: 1.3rem;
+      align-items: flex-start;
+    }
+
+    @media (max-width: 780px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .card-shell {
+      background: linear-gradient(145deg, #faf4ff, #fdfbff);
+      border-radius: 18px;
+      border: 1px solid var(--border-subtle);
+      padding: 1.1rem;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      min-height: 270px;
+    }
+
+    .game-card {
+      width: 100%;
+      max-width: 460px;
+      background: linear-gradient(145deg, #ffffff 0%, #fef7ff 40%, #f7f4ff 100%);
+      border-radius: 18px;
+      border: 1px solid #e0defa;
+      box-shadow: 0 14px 30px rgba(133, 124, 255, 0.2);
+      padding: 1.15rem 1.35rem 1.3rem;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .game-card::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(circle at top right, rgba(255,255,255,0.8), transparent 55%),
+        radial-gradient(circle at bottom left, rgba(255,255,255,0.8), transparent 55%);
+      pointer-events: none;
+      mix-blend-mode: screen;
+    }
+
+    .game-card::after {
+      content: "";
+      position: absolute;
+      inset-inline: 0;
+      bottom: 0;
+      height: 6px;
+      background: linear-gradient(90deg, var(--deck-accent), var(--deck-accent-soft), var(--deck-accent-deep));
+      opacity: 0.95;
+    }
+
+    .game-card.revealed {
+      transform: translateY(-3px);
+      box-shadow: 0 20px 44px rgba(0,0,0,0.22);
+      border-color: var(--deck-accent);
+    }
+
+    .demo-watermark {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      font-size: 0.7rem;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: rgba(90, 74, 214, 0.35);
+      font-weight: 600;
+      z-index: 0;
+    }
+
+    .card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.5rem;
+      margin-bottom: 0.8rem;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-left-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .card-deck-icon {
+      width: 26px;
+      height: 26px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.95rem;
+      background: radial-gradient(circle at top, var(--deck-accent-soft), #ffffff);
+      border: 1px solid var(--deck-accent);
+      box-shadow: 0 4px 10px rgba(0,0,0,0.09);
+    }
+
+    .card-tag {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      padding: 0.18rem 0.6rem;
+      border-radius: 999px;
+      background: radial-gradient(circle at top left, var(--deck-accent-soft), #f4f1ff);
+      color: #4b3dd6;
+      border: 1px solid #e3ddff;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+      max-width: 220px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .card-level {
+      font-size: 0.7rem;
+      opacity: 0.7;
+    }
+
+    .card-prompt {
+      margin: 0.2rem 0 1rem;
+      font-size: 0.98rem;
+      line-height: 1.5;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-note {
+      margin: 0 0 0.6rem;
+      font-size: 0.8rem;
+      color: #666;
+      position: relative;
+      z-index: 1;
+    }
+
+    .card-section-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      opacity: 0.6;
+      margin-bottom: 0.3rem;
+    }
+
+    .card-steps {
+      list-style: decimal;
+      padding-left: 1.1rem;
+      margin: 0 0 0.8rem;
+      font-size: 0.82rem;
+      color: #555;
+    }
+
+    .card-steps li:not(:last-child) {
+      margin-bottom: 0.2rem;
+    }
+
+    .card-mode-hint {
+      font-size: 0.78rem;
+      color: #555;
+      background: #f9f7ff;
+      border-radius: 10px;
+      border: 1px dashed #ded7ff;
+      padding: 0.4rem 0.6rem;
+      margin-bottom: 0.7rem;
+    }
+
+    .affirm-wrap {
+      margin-top: 0.1rem;
+      padding: 0.6rem 0.8rem 0.7rem;
+      border-radius: 14px;
+      border: 1px dashed #d3ccff;
+      background: rgba(245, 242, 255, 0.98);
+      position: relative;
+      z-index: 1;
+    }
+
+    .affirm-label {
+      font-size: 0.72rem;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      opacity: 0.65;
+      margin-bottom: 0.15rem;
+    }
+
+    .affirmation-text svg {
+      width: 100%;
+      height: 40px;
+    }
+
+    .affirm-plain {
+      font-size: 0.9rem;
+      color: #444;
+      font-style: italic;
+      margin-top: 0.05rem;
+    }
+
+    .affirm-footer-note {
+      font-size: 0.75rem;
+      margin-top: 0.25rem;
+      color: #777;
+    }
+
+    .side-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.9rem;
+      font-size: 0.86rem;
+    }
+
+    .btn-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      align-items: center;
+    }
+
+    .btn {
+      border: none;
+      border-radius: 999px;
+      padding: 0.42rem 0.9rem;
+      font-size: 0.86rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: transform 0.08s ease, box-shadow 0.08s ease, background 0.15s ease;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, var(--deck-accent), var(--deck-accent-soft));
+      color: #231b57;
+      box-shadow: 0 8px 18px rgba(121, 106, 255, 0.28);
+    }
+
+    .btn-secondary {
+      background: #f1f1f6;
+      color: #333;
+      border: 1px solid #dedee8;
+    }
+
+    .btn-large {
+      padding: 0.6rem 1.3rem;
+      font-size: 0.95rem;
+    }
+
+    .btn:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 18px rgba(0,0,0,0.08);
+    }
+
+    .btn:active {
+      transform: translateY(0);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+    }
+
+    .pill-info {
+      padding: 0.5rem 0.75rem;
+      border-radius: 12px;
+      background: #faf9ff;
+      border: 1px dashed #ddd8ff;
+      font-size: 0.8rem;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: #666;
+      line-height: 1.5;
+    }
+
+    .status {
+      font-size: 0.8rem;
+      color: #444;
+    }
+
+    .affirm-svg-text {
+      fill: none;
+      stroke: var(--deck-accent-deep);
+      stroke-width: 0.8;
+      font-family: "Segoe Script","Dancing Script","Pacifico",cursive;
+    }
+
+    .sparkle {
+      position: fixed;
+      pointer-events: none;
+      font-size: 1.1rem;
+      opacity: 0;
+      animation: sparkleUp 900ms ease-out forwards;
+      z-index: 9999;
+    }
+
+    @keyframes sparkleUp {
+      0% {
+        opacity: 1;
+        transform: translate(-50%, -50%) scale(0.9) translateY(6px);
+      }
+      100% {
+        opacity: 0;
+        transform: translate(-50%, -50%) scale(1.15) translateY(-22px);
+      }
+    }
+
+    .cta-box {
+      padding: 0.7rem 0.9rem;
+      border-radius: 14px;
+      background: #fff7f2;
+      border: 1px solid #ffd7ba;
+      font-size: 0.8rem;
+    }
+
+    .cta-box b {
+      color: #b3521c;
+    }
+
+    .legal-note {
+      font-size: 0.68rem;
+      color: #777;
+      line-height: 1.4;
+    }
+
+    .demo-tagline {
+      font-size: 0.8rem;
+      color: #555;
+      margin-top: 0.25rem;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app">
+    <div class="demo-ribbon">DEMO EDITION</div>
+
+    <header>
+      <div class="header-left">
+        <img src="healing-minez-logo.png" alt="Healing Minez Logo" class="logo-main" />
+        <div class="title-block">
+          <h1>THE SHIFT – DEMO EDITION</h1>
+          <p>Sample cards from The Shift: A Healing Minez Virtual Mindset Awareness Game.</p>
+          <div class="brand-line">A HEALING MINEZ EXPERIENCE</div>
+          <div class="demo-tagline">This is a free demo with limited cards for testing and exploration.</div>
+        </div>
+      </div>
+      <div class="mode-toggle" aria-label="Choose game mode">
+        <button class="mode-btn active" data-mode="solo">Solo</button>
+        <button class="mode-btn" data-mode="group">Group / Circle</button>
+      </div>
+    </header>
+
+    <div class="controls-row">
+      <div class="deck-select-group">
+        <span>Demo Deck:</span>
+        <select id="deck-select">
+          <option value="soloInner">Solo – Deep Inner Work (Sample)</option>
+          <option value="couples">Couples – Healing (Sample)</option>
+          <option value="innerChild">Inner Child – Joy & Repair (Sample)</option>
+          <option value="dualMode">Universal – Any Mode (Sample)</option>
+        </select>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" id="draw-btn" type="button">
+          🔮 Reveal Next Demo Card
+        </button>
+        <button class="btn btn-secondary" id="reshuffle-btn" type="button">
+          ♻ Refresh Energy
+        </button>
+      </div>
+    </div>
+
+    <div class="layout">
+      <section class="card-shell">
+        <article class="game-card" aria-live="polite" id="game-card">
+          <div class="card-top">
+            <div class="card-left-meta">
+              <span class="card-deck-icon" id="card-deck-icon">🌙</span>
+              <span class="card-tag" id="card-category">Choose a deck to begin</span>
+            </div>
+            <span class="card-level" id="card-level"></span>
+          </div>
+
+          <p class="card-prompt" id="card-prompt">
+            This is a demo version of The Shift. Choose a deck and click “Reveal Next Demo Card” to experience a sample prompt.
+          </p>
+
+          <p class="card-note" id="card-note">
+            This space is a mirror, not a test. There are no wrong answers here.
+          </p>
+
+          <div id="card-steps-wrap" style="display:none;">
+            <div class="card-section-title">Try this</div>
+            <ol class="card-steps" id="card-steps"></ol>
+          </div>
+
+          <div class="card-mode-hint" id="card-mode-hint">
+            In Solo Mode, answer gently and honestly. You can speak out loud, write in a journal, or simply sit with what arises.
+          </div>
+
+          <div class="affirm-wrap">
+            <div class="affirm-label">Whisper this softly or say it within</div>
+            <div class="affirmation-text">
+              <svg viewBox="0 0 400 40" xmlns="http://www.w3.org/2000/svg">
+                <text x="200" y="26" text-anchor="middle"
+                      class="affirm-svg-text" id="affirmation-text">
+                  I am open to a new way of seeing this.
+                </text>
+              </svg>
+            </div>
+            <div class="affirm-plain" id="affirmation-text-plain">
+              I am open to a new way of seeing this.
+            </div>
+            <div class="affirm-footer-note">
+              Repeat it 2–3 times, either out loud in a soft voice or quietly in your mind.
+            </div>
+          </div>
+
+          <div class="demo-watermark">
+            DEMO · NOT FOR RESALE
+          </div>
+        </article>
+      </section>
+
+      <aside class="side-panel">
+        <div class="pill-info" id="deck-description">
+          <b>Demo – Solo Inner Work:</b> Sample questions for private emotional insight, self-awareness, and gentle healing.
+        </div>
+
+        <div class="hint">
+          <b>How to use this demo:</b><br/>
+          1. Choose <b>Solo</b> or <b>Group / Circle</b> at the top.<br/>
+          2. Pick one of the <b>demo decks</b> (each has only a few sample cards).<br/>
+          3. Click <b>“Reveal Next Demo Card”</b> and read the prompt slowly.<br/>
+          4. Answer out loud, in your mind, or in a journal.<br/>
+          5. Whisper the affirmation softly or say it within.<br/>
+          6. When you feel complete, refresh or try another deck.
+        </div>
+
+        <div class="cta-box">
+          <b>Love this experience?</b><br/>
+          This is just a <b>small taste</b> of The Shift – Master Edition, which includes:<br/>
+          • 10 full decks<br/>
+          • 150+ cards<br/>
+          • More affirmations & depth<br/><br/>
+          <b>Unlock the full game here:</b><br/>
+          <a href="https://payhip.com/b/azZex" target="_blank">
+            👉 Click to purchase The Shift – Master Edition on Payhip
+          </a>
+        </div>
+
+        <div class="legal-note">
+          This demo is for self-reflection, personal growth, and emotional awareness only.
+          It is not a substitute for therapy, mental health treatment, or medical advice.
+          If you are in crisis or need professional support, please reach out to a licensed
+          mental health provider or local emergency services.<br/><br/>
+          <b>Intellectual Property Notice:</b> This demo edition and all card text, layouts,
+          and designs are the copyrighted work of Healing Minez. It is provided for personal
+          evaluation and use only. It may not be copied, resold, redistributed, or used for
+          commercial purposes, in whole or in part, without explicit written permission.
+        </div>
+
+        <div class="status" id="status-message">
+          Demo deck loaded. Reveal your first sample card when you’re ready.
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <script>
+    const deckThemes = {
+      soloInner: {
+        icon: "🌙",
+        accent: "#cab8ff",
+        accentSoft: "#f3e9ff",
+        accentDeep: "#5a4ad6"
+      },
+      couples: {
+        icon: "💞",
+        accent: "#ffb6c9",
+        accentSoft: "#ffe3ec",
+        accentDeep: "#c23764"
+      },
+      innerChild: {
+        icon: "🧸",
+        accent: "#ffcf8f",
+        accentSoft: "#fff1d9",
+        accentDeep: "#e08a00"
+      },
+      dualMode: {
+        icon: "✧",
+        accent: "#f8e5a6",
+        accentSoft: "#fff6d8",
+        accentDeep: "#c89b1e"
+      }
+    };
+
+    let currentTheme = deckThemes.soloInner;
+
+    function applyDeckTheme(deckKey) {
+      const theme = deckThemes[deckKey] || deckThemes.soloInner;
+      currentTheme = theme;
+      document.documentElement.style.setProperty("--deck-accent", theme.accent);
+      document.documentElement.style.setProperty("--deck-accent-soft", theme.accentSoft);
+      document.documentElement.style.setProperty("--deck-accent-deep", theme.accentDeep);
+      const iconEl = document.getElementById("card-deck-icon");
+      if (iconEl) iconEl.textContent = theme.icon;
+    }
+
+    const decks = {
+      soloInner: {
+        name: "Demo – Solo Inner Work",
+        mode: "solo",
+        description:
+          "Sample prompts for emotional insight, self-awareness, and gentle inner work.",
+        cards: [
+          {
+            category: "Emotional Check-In",
+            level: "Soft",
+            prompt: "What emotion has been quietly sitting underneath everything lately?",
+            note: "Often the quietest emotions are the most honest ones.",
+            steps: [
+              "Name the emotion without judging it.",
+              "Ask it: “What are you here to show me?”",
+              "Let the answer arrive softly."
+            ],
+            affirmation: "I honor the truth rising within me."
+          },
+          {
+            category: "Body Truth",
+            level: "Soft",
+            prompt: "If your body could speak in a full sentence right now, what would it say?",
+            note: "The body whispers long before the mind understands.",
+            steps: [
+              "Place your hand on your chest or stomach.",
+              "Breathe once, slowly.",
+              "Listen for the first intuitive message."
+            ],
+            affirmation: "My body’s wisdom is sacred."
+          }
+        ]
+      },
+
+      couples: {
+        name: "Demo – Couples Healing",
+        mode: "group",
+        description:
+          "Sample prompts for emotional safety, communication, and connection.",
+        cards: [
+          {
+            category: "Check-In",
+            level: "Soft",
+            prompt: "Partner A: Share one feeling you’ve been carrying lately in this relationship.",
+            note: "Partner B only listens — no fixing, no defending.",
+            steps: [
+              "Partner A shares for 1–2 minutes.",
+              "Partner B reflects back what they heard.",
+              "Switch roles."
+            ],
+            affirmation: "We are learning how to hear each other."
+          },
+          {
+            category: "Appreciation",
+            level: "Soft",
+            prompt: "Name three things you genuinely appreciate about your partner this season.",
+            note: "Be specific and present-focused.",
+            steps: [
+              "Take turns sharing appreciations.",
+              "Let there be a pause after each one.",
+              "End with “thank you for seeing me.”"
+            ],
+            affirmation: "We see each other with kindness."
+          }
+        ]
+      },
+
+      innerChild: {
+        name: "Demo – Inner Child",
+        mode: "any",
+        description:
+          "Sample prompts to reconnect with younger you through softness and play.",
+        cards: [
+          {
+            category: "Little You",
+            level: "Soft",
+            prompt: "Imagine you at 7 years old sitting beside you. What is the first thing they would say?",
+            note: "Let the answer be simple and honest.",
+            steps: [
+              "Close your eyes for a moment.",
+              "See their face and body language.",
+              "Listen to the first sentence that appears."
+            ],
+            affirmation: "I welcome my younger self with love."
+          },
+          {
+            category: "Play",
+            level: "Light",
+            prompt: "What activity used to make you lose track of time as a child?",
+            note: "It might be drawing, dancing, imagining, or something small.",
+            steps: [
+              "Name the activity.",
+              "Decide one tiny way to revisit it this week.",
+              "Protect ten minutes for it."
+            ],
+            affirmation: "Joy is still allowed for me."
+          }
+        ]
+      },
+
+      dualMode: {
+        name: "Demo – Universal",
+        mode: "any",
+        description:
+          "Timeless soul questions that work in solo, couples, or groups.",
+        cards: [
+          {
+            category: "Current Chapter",
+            level: "Core",
+            prompt: "If this season of your life were a book chapter, what would its title be?",
+            note: "Let the title be honest, not polished.",
+            steps: [
+              "Say or write the title.",
+              "Ask: “What is this chapter teaching me?”",
+              "Share if you’re with others, or journal on it."
+            ],
+            affirmation: "Every chapter of my life has meaning."
+          },
+          {
+            category: "Lesson",
+            level: "Soft",
+            prompt: "What is life gently trying to teach you right now?",
+            note: "Lessons often repeat until we listen.",
+            steps: [
+              "Name the lesson in one sentence.",
+              "Notice where it shows up most often.",
+              "Thank life for the invitation."
+            ],
+            affirmation: "I am open to the lessons of this season."
+          }
+        ]
+      }
+    };
+
+    let mode = "solo";
+    let currentDeckKey = "soloInner";
+    let lastIndex = null;
+
+    const modeButtons = document.querySelectorAll(".mode-btn");
+    const deckSelect = document.getElementById("deck-select");
+    const deckDescriptionEl = document.getElementById("deck-description");
+
+    const drawBtn = document.getElementById("draw-btn");
+    const reshuffleBtn = document.getElementById("reshuffle-btn");
+
+    const categoryEl = document.getElementById("card-category");
+    const levelEl = document.getElementById("card-level");
+    const promptEl = document.getElementById("card-prompt");
+    const noteEl = document.getElementById("card-note");
+    const stepsWrap = document.getElementById("card-steps-wrap");
+    const stepsList = document.getElementById("card-steps");
+    const affirmTextEl = document.getElementById("affirmation-text");
+    const affirmPlainEl = document.getElementById("affirmation-text-plain");
+    const statusMessage = document.getElementById("status-message");
+    const gameCardEl = document.getElementById("game-card");
+    const modeHintEl = document.getElementById("card-mode-hint");
+
+    function updateModeHint() {
+      let text = "";
+      if (mode === "solo") {
+        text = "In Solo Mode, answer gently and honestly. You can speak out loud, write in a journal, or simply sit with what arises.";
+      } else if (currentDeckKey === "couples") {
+        text = "For Couples, let Partner A share while Partner B only listens. Then switch and reflect on what you heard with care.";
+      } else {
+        text = "In shared modes, you may answer, pass, or simply listen. Your presence in the space is already enough.";
+      }
+      modeHintEl.textContent = text;
+    }
+
+    function updateMode(newMode) {
+      mode = newMode;
+      modeButtons.forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.mode === mode);
+      });
+
+      const deck = decks[currentDeckKey];
+      const modeText =
+        mode === "solo"
+          ? "<b>Solo Mode:</b> This is a conversation with yourself. Answer honestly, gently, and at your own pace."
+          : "<b>Group / Circle Mode:</b> Take turns drawing cards. Share only what feels safe. This space is for curiosity, not judgment.";
+
+      deckDescriptionEl.innerHTML =
+        `<b>${deck.name}:</b> ${deck.description}<br/><br/>${modeText}`;
+
+      statusMessage.textContent =
+        `Mode: ${mode === "solo" ? "Solo" : "Group / Circle"}. This is a demo with limited cards.`;
+
+      updateModeHint();
+    }
+
+    modeButtons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        updateMode(btn.dataset.mode);
+      });
+    });
+
+    deckSelect.addEventListener("change", () => {
+      currentDeckKey = deckSelect.value;
+      lastIndex = null;
+
+      const deck = decks[currentDeckKey];
+      const modeText =
+        mode === "solo"
+          ? "<b>Solo Mode:</b> This is a conversation with yourself. Answer honestly, gently, and at your own pace."
+          : "<b>Group / Circle Mode:</b> Take turns drawing cards. Share only what feels safe. This space is for curiosity, not judgment.";
+
+      deckDescriptionEl.innerHTML =
+        `<b>${deck.name}:</b> ${deck.description}<br/><br/>${modeText}`;
+
+      applyDeckTheme(currentDeckKey);
+      updateModeHint();
+
+      statusMessage.textContent =
+        `Demo deck changed to “${deck.name}”. Click Reveal Next Demo Card to receive a sample prompt.`;
+    });
+
+    function triggerCardRevealMagic() {
+      if (!gameCardEl) return;
+      gameCardEl.classList.add("revealed");
+      setTimeout(() => gameCardEl.classList.remove("revealed"), 300);
+
+      const rect = gameCardEl.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 3;
+
+      const emojis = ["✨", "✧", "⭐"];
+      const colors = [
+        currentTheme.accent,
+        currentTheme.accentSoft,
+        currentTheme.accentDeep,
+        "#ffffff"
+      ];
+
+      for (let i = 0; i < 6; i++) {
+        const spark = document.createElement("span");
+        spark.className = "sparkle";
+        spark.textContent =
+          emojis[Math.floor(Math.random() * emojis.length)];
+        spark.style.color =
+          colors[Math.floor(Math.random() * colors.length)];
+        const spreadX = (Math.random() - 0.5) * rect.width * 0.6;
+        const spreadY = (Math.random() - 0.5) * 40;
+        spark.style.left = centerX + spreadX + "px";
+        spark.style.top = centerY + spreadY + "px";
+        document.body.appendChild(spark);
+        setTimeout(() => spark.remove(), 900);
+      }
+    }
+
+    function drawCard() {
+      const deck = decks[currentDeckKey];
+      if (!deck) {
+        statusMessage.textContent = "No deck selected.";
+        return;
+      }
+
+      if (deck.mode !== "any" && deck.mode !== mode) {
+        statusMessage.textContent =
+          `This demo deck (${deck.name}) is designed for ${deck.mode === "solo" ? "Solo Mode" : "Group / Circle Mode"}. Switch modes or choose another demo deck.`;
+        return;
+      }
+
+      const availableCards = deck.cards;
+      if (!availableCards || !availableCards.length) {
+        statusMessage.textContent = "This demo deck has no cards yet.";
+        return;
+      }
+
+      let index;
+      let safeCounter = 0;
+      do {
+        index = Math.floor(Math.random() * availableCards.length);
+        safeCounter++;
+      } while (index === lastIndex && safeCounter < 5);
+
+      lastIndex = index;
+      const card = availableCards[index];
+      renderCard(card);
+      triggerCardRevealMagic();
+    }
+
+    function renderCard(card) {
+      categoryEl.textContent = card.category || "Mindful Prompt";
+      levelEl.textContent = card.level ? `Level: ${card.level}` : "";
+      promptEl.textContent = card.prompt || "";
+      noteEl.textContent = card.note || "";
+
+      if (card.steps && card.steps.length) {
+        stepsWrap.style.display = "";
+        stepsList.innerHTML = "";
+        card.steps.forEach(step => {
+          const li = document.createElement("li");
+          li.textContent = step;
+          stepsList.appendChild(li);
+        });
+      } else {
+        stepsWrap.style.display = "none";
+        stepsList.innerHTML = "";
+      }
+
+      const affirmationText =
+        card.affirmation || "I am open to a new way of seeing this.";
+      affirmTextEl.textContent = affirmationText;
+      affirmPlainEl.textContent = affirmationText;
+
+      updateModeHint();
+      statusMessage.textContent = "Demo card revealed. Take your time with it.";
+    }
+
+    drawBtn.addEventListener("click", drawCard);
+
+    reshuffleBtn.addEventListener("click", () => {
+      lastIndex = null;
+      statusMessage.textContent =
+        "Demo energy refreshed. Reveal your next sample card when you feel ready.";
+    });
+
+    applyDeckTheme(currentDeckKey);
+    updateMode("solo");
+  </script>
+</body>
+</html>
