@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>The Shift – Demo Edition · Healing Minez</title>
+  <title>The Shift – Master Edition · Demo</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     :root {
@@ -10,6 +10,7 @@
       --card-bg: #ffffff;
       --border-subtle: #e0e0e6;
       --text-main: #333333;
+
       --deck-accent: #cab8ff;
       --deck-accent-soft: #ffc6ff;
       --deck-accent-deep: #5a4ad6;
@@ -41,6 +42,22 @@
       padding: 1.75rem 1.9rem 1.9rem;
       position: relative;
       overflow: hidden;
+    }
+
+    /* DEMO ribbon */
+    .demo-ribbon {
+      position: absolute;
+      top: 12px;
+      right: -50px;
+      background: linear-gradient(135deg, #ff9fb0, #ffcf8f);
+      color: #3b2333;
+      text-transform: uppercase;
+      font-size: 0.7rem;
+      letter-spacing: 0.18em;
+      padding: 0.35rem 3.2rem;
+      transform: rotate(28deg);
+      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+      z-index: 3;
     }
 
     header {
@@ -112,21 +129,6 @@
       color: var(--deck-accent-deep);
       box-shadow: 0 4px 10px rgba(0,0,0,0.05);
       transform: translateY(-1px);
-    }
-
-    .demo-ribbon {
-      position: absolute;
-      top: 12px;
-      right: -48px;
-      background: linear-gradient(135deg, #ff9fb0, #ffcf8f);
-      color: #3b2333;
-      text-transform: uppercase;
-      font-size: 0.7rem;
-      letter-spacing: 0.18em;
-      padding: 0.35rem 3rem;
-      transform: rotate(28deg);
-      box-shadow: 0 8px 18px rgba(0,0,0,0.25);
-      z-index: 2;
     }
 
     .controls-row {
@@ -219,12 +221,13 @@
       border-color: var(--deck-accent);
     }
 
+    /* Demo watermark on card */
     .demo-watermark {
       position: absolute;
-      right: 10px;
       bottom: 10px;
+      right: 16px;
       font-size: 0.7rem;
-      letter-spacing: 0.2em;
+      letter-spacing: 0.22em;
       text-transform: uppercase;
       color: rgba(90, 74, 214, 0.35);
       font-weight: 600;
@@ -462,44 +465,327 @@
       }
     }
 
-    .cta-box {
-      padding: 0.7rem 0.9rem;
-      border-radius: 14px;
-      background: #fff7f2;
-      border: 1px solid #ffd7ba;
+    /* DEMO locked visual fade */
+    .demo-locked .card-shell,
+    .demo-locked .side-panel,
+    .demo-locked .controls-row {
+      opacity: 0.45;
+      filter: grayscale(0.2);
+    }
+
+    .demo-locked #draw-btn {
+      cursor: not-allowed;
+      opacity: 0.6;
+    }
+
+    .demo-locked .mode-toggle,
+    .demo-locked #deck-select,
+    .demo-locked #reshuffle-btn {
+      pointer-events: none;
+    }
+
+    /* Demo popup overlay */
+    .demo-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(12, 8, 30, 0.82);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+      backdrop-filter: blur(6px);
+    }
+
+    .demo-overlay.active {
+      display: flex;
+    }
+
+    .demo-modal {
+      max-width: 460px;
+      width: 100%;
+      background: linear-gradient(145deg, #ffffff, #f8f2ff);
+      border-radius: 22px;
+      padding: 1.5rem 1.6rem 1.4rem;
+      box-shadow: 0 26px 70px rgba(0,0,0,0.5);
+      border: 1px solid rgba(255,255,255,0.9);
+      color: #271c4f;
+      position: relative;
+    }
+
+    .demo-modal h2 {
+      margin: 0 0 0.6rem;
+      font-size: 1.3rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+    }
+
+    .demo-modal p {
+      margin: 0.15rem 0;
+      font-size: 0.9rem;
+      line-height: 1.5;
+    }
+
+    .demo-modal-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
+      align-items: center;
+    }
+
+    .demo-modal a.btn {
+      text-decoration: none;
+      justify-content: center;
+    }
+
+    .demo-modal-small {
+      font-size: 0.74rem;
+      color: #6b628f;
+      margin-top: 0.6rem;
+    }
+
+    /* Start overlay (intro) */
+
+    .start-overlay {
+      position: fixed;
+      inset: 0;
+      background: radial-gradient(circle at top left, rgba(255, 208, 255, 0.7), rgba(54, 31, 99, 0.88));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 1.5rem;
+      z-index: 999;
+      backdrop-filter: blur(10px);
+    }
+
+    .start-overlay.hidden {
+      display: none;
+    }
+
+    .start-card {
+      max-width: 560px;
+      width: 100%;
+      background: linear-gradient(145deg, #ffffff, #f9f3ff);
+      border-radius: 24px;
+      border: 1px solid rgba(255,255,255,0.9);
+      box-shadow: 0 28px 80px rgba(0,0,0,0.45);
+      padding: 1.7rem 1.8rem 1.6rem;
+      position: relative;
+      overflow: hidden;
+      color: #2d244f;
+    }
+
+    .start-card::before,
+    .start-card::after {
+      content: "";
+      position: absolute;
+      border-radius: 999px;
+      filter: blur(18px);
+      opacity: 0.55;
+      animation: floatOrb 9s ease-in-out infinite alternate;
+      pointer-events: none;
+    }
+
+    .start-card::before {
+      width: 200px;
+      height: 200px;
+      top: -40px;
+      right: -60px;
+      background: radial-gradient(circle, rgba(255,198,255,0.9), transparent 60%);
+    }
+
+    .start-card::after {
+      width: 220px;
+      height: 220px;
+      bottom: -60px;
+      left: -80px;
+      background: radial-gradient(circle, rgba(189,178,255,0.95), transparent 65%);
+      animation-delay: 1.2s;
+    }
+
+    @keyframes floatOrb {
+      0% { transform: translate3d(0, 0, 0); }
+      100% { transform: translate3d(10px, -10px, 0); }
+    }
+
+    .start-content {
+      position: relative;
+      z-index: 1;
+    }
+
+    .logo-start {
+      width: 88px;
+      height: 88px;
+      border-radius: 20px;
+      object-fit: cover;
+      box-shadow: 0 14px 32px rgba(0,0,0,0.45);
+      margin-bottom: 0.8rem;
+    }
+
+    .start-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.3rem;
+      font-size: 0.7rem;
+      padding: 0.2rem 0.7rem;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      background: rgba(255,255,255,0.9);
+      border: 1px solid rgba(255,255,255,0.9);
+      margin-bottom: 0.6rem;
+    }
+
+    .start-title {
+      font-size: 1.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      margin: 0 0 0.2rem;
+    }
+
+    .start-subtitle {
+      margin: 0 0 0.8rem;
+      font-size: 0.95rem;
+      max-width: 430px;
+      line-height: 1.5;
+    }
+
+    .start-small {
+      font-size: 0.78rem;
+      opacity: 0.92;
+      margin-bottom: 0.7rem;
+    }
+
+    .start-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.6rem;
+      margin-top: 0.5rem;
+      margin-bottom: 0.8rem;
+    }
+
+    .start-footnote {
+      font-size: 0.75rem;
+      opacity: 0.85;
+      margin-bottom: 0.6rem;
+    }
+
+    .start-list-title {
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      opacity: 0.85;
+      margin: 0.3rem 0 0.25rem;
+    }
+
+    .start-list {
+      padding-left: 1rem;
+      margin: 0;
       font-size: 0.8rem;
+      line-height: 1.5;
     }
 
-    .cta-box b {
-      color: #b3521c;
+    .start-chip-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.3rem;
+      margin-top: 0.6rem;
     }
 
-    .legal-note {
-      font-size: 0.68rem;
+    .start-chip {
+      font-size: 0.7rem;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.85);
+      border: 1px solid rgba(255,255,255,0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    @media (max-width: 600px) {
+      .start-card {
+        padding: 1.4rem 1.3rem 1.3rem;
+      }
+      .start-title {
+        font-size: 1.5rem;
+      }
+    }
+
+    .legal-footer {
+      margin-top: 0.8rem;
+      font-size: 0.7rem;
       color: #777;
       line-height: 1.4;
-    }
-
-    .demo-tagline {
-      font-size: 0.8rem;
-      color: #555;
-      margin-top: 0.25rem;
     }
   </style>
 </head>
 <body>
 
+  <!-- START SCREEN -->
+  <div class="start-overlay" id="start-overlay">
+    <div class="start-card">
+      <div class="start-content">
+        <img src="healing-minez-logo.png" alt="Healing Minez Logo" class="logo-start" />
+        <div class="start-badge">
+          ✨ A Healing Minez Experience · Demo
+        </div>
+        <h1 class="start-title">THE SHIFT</h1>
+        <p class="start-subtitle">
+          Are you ready to experience <b>The Shift</b>?  
+          This demo offers a small taste of the full Master Edition — a guided space for
+          self-awareness, healing, and real conversation, whether you’re solo, with a partner,
+          or in community.
+        </p>
+        <p class="start-small">
+          This is a <b>limited demo</b>. You’ll be able to draw a few cards, feel the energy,
+          and explore the flow — then you’ll be invited to unlock the full experience.
+        </p>
+
+        <div class="start-actions">
+          <button class="btn btn-primary btn-large" id="start-solo-btn" type="button">
+            🌙 Begin Demo · Solo
+          </button>
+          <button class="btn btn-secondary btn-large" id="start-group-btn" type="button">
+            🌌 Begin Demo · Group
+          </button>
+        </div>
+
+        <p class="start-footnote">
+          <b>What is The Shift?</b>  
+          A soul-led journey of self-awareness, healing conversations, and mindset shifts — so you
+          can slowly step into the life, relationships, and inner peace you’ve been craving.
+        </p>
+
+        <div class="start-list-title">In the full Master Edition you’ll explore:</div>
+        <ul class="start-list">
+          <li>Deep inner work, shadow work, and self-compassion</li>
+          <li>Connection, intimacy, and healing communication with others</li>
+          <li>Inner child joy, future-self embodiment, and belief reframes</li>
+        </ul>
+
+        <div class="start-chip-row">
+          <div class="start-chip">🌙 Solo Deep Work</div>
+          <div class="start-chip">💞 Couples Healing</div>
+          <div class="start-chip">🧸 Inner Child Joy</div>
+          <div class="start-chip">🌑 Shadow Work</div>
+          <div class="start-chip">🌿 Circles & Community</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <div class="app">
-    <div class="demo-ribbon">DEMO EDITION</div>
+    <div class="demo-ribbon">DEMO VERSION</div>
 
     <header>
       <div class="header-left">
         <img src="healing-minez-logo.png" alt="Healing Minez Logo" class="logo-main" />
         <div class="title-block">
-          <h1>THE SHIFT – DEMO EDITION</h1>
-          <p>Sample cards from The Shift: A Healing Minez Virtual Mindset Awareness Game.</p>
+          <h1>THE SHIFT – MASTER EDITION · DEMO</h1>
+          <p>This is a limited preview of The Shift. Draw a few cards, feel into the questions,
+             and experience a glimpse of the full healing journey.</p>
           <div class="brand-line">A HEALING MINEZ EXPERIENCE</div>
-          <div class="demo-tagline">This is a free demo with limited cards for testing and exploration.</div>
         </div>
       </div>
       <div class="mode-toggle" aria-label="Choose game mode">
@@ -510,20 +796,26 @@
 
     <div class="controls-row">
       <div class="deck-select-group">
-        <span>Demo Deck:</span>
+        <span>Deck:</span>
         <select id="deck-select">
-          <option value="soloInner">Solo – Deep Inner Work (Sample)</option>
-          <option value="couples">Couples – Healing (Sample)</option>
-          <option value="innerChild">Inner Child – Joy & Repair (Sample)</option>
-          <option value="dualMode">Universal – Any Mode (Sample)</option>
+          <option value="soloInner">Solo – Deep Inner Work</option>
+          <option value="groupCircle">Group / Circle – Connection & Conversation</option>
+          <option value="couples">Couples – Relationship Healing</option>
+          <option value="innerChild">Inner Child – Reparenting & Joy</option>
+          <option value="shadowWork">Shadow Work – Deep Roots</option>
+          <option value="compassion">Compassion – Softening & Kindness</option>
+          <option value="reframe">Mindset Reframe – Belief Shifts</option>
+          <option value="becoming">Becoming – Future Self</option>
+          <option value="connection">Connection – Shared Moments</option>
+          <option value="dualMode">Universal – Any Mode Deck</option>
         </select>
       </div>
       <div class="btn-row">
         <button class="btn btn-primary" id="draw-btn" type="button">
-          🔮 Reveal Next Demo Card
+          🔮 Reveal Next Shift
         </button>
         <button class="btn btn-secondary" id="reshuffle-btn" type="button">
-          ♻ Refresh Energy
+          ♻ Refresh the Energy
         </button>
       </div>
     </div>
@@ -534,13 +826,14 @@
           <div class="card-top">
             <div class="card-left-meta">
               <span class="card-deck-icon" id="card-deck-icon">🌙</span>
-              <span class="card-tag" id="card-category">Choose a deck to begin</span>
+              <span class="card-tag" id="card-category">Deck not drawn yet</span>
             </div>
             <span class="card-level" id="card-level"></span>
           </div>
 
           <p class="card-prompt" id="card-prompt">
-            This is a demo version of The Shift. Choose a deck and click “Reveal Next Demo Card” to experience a sample prompt.
+            This is a demo version of The Shift – Master Edition. Choose a deck and click
+            “Reveal Next Shift” to explore a sample card.
           </p>
 
           <p class="card-note" id="card-note">
@@ -553,7 +846,7 @@
           </div>
 
           <div class="card-mode-hint" id="card-mode-hint">
-            In Solo Mode, answer gently and honestly. You can speak out loud, write in a journal, or simply sit with what arises.
+            In Solo Mode, answer gently and honestly. You can speak out loud or write in a journal.
           </div>
 
           <div class="affirm-wrap">
@@ -575,63 +868,89 @@
           </div>
 
           <div class="demo-watermark">
-            DEMO · NOT FOR RESALE
+            DEMO VERSION · NOT FOR RESALE
           </div>
         </article>
       </section>
 
       <aside class="side-panel">
         <div class="pill-info" id="deck-description">
-          <b>Demo – Solo Inner Work:</b> Sample questions for private emotional insight, self-awareness, and gentle healing.
+          <b>Solo – Deep Inner Work (Demo):</b> A small sample of cards for private emotional insight,
+          healing, and gentle self-awareness.
         </div>
 
         <div class="hint">
           <b>How to use this demo:</b><br/>
           1. Choose <b>Solo</b> or <b>Group / Circle</b> at the top.<br/>
-          2. Pick one of the <b>demo decks</b> (each has only a few sample cards).<br/>
-          3. Click <b>“Reveal Next Demo Card”</b> and read the prompt slowly.<br/>
-          4. Answer out loud, in your mind, or in a journal.<br/>
-          5. Whisper the affirmation softly or say it within.<br/>
-          6. When you feel complete, refresh or try another deck.
-        </div>
-
-        <div class="cta-box">
-          <b>Love this experience?</b><br/>
-          This is just a <b>small taste</b> of The Shift – Master Edition, which includes:<br/>
-          • 10 full decks<br/>
-          • 150+ cards<br/>
-          • More affirmations & depth<br/><br/>
-          <b>Unlock the full game here:</b><br/>
-          <a href="https://payhip.com/b/azZex" target="_blank">
-            👉 Click to purchase The Shift – Master Edition on Payhip
-          </a>
-        </div>
-
-        <div class="legal-note">
-          This demo is for self-reflection, personal growth, and emotional awareness only.
-          It is not a substitute for therapy, mental health treatment, or medical advice.
-          If you are in crisis or need professional support, please reach out to a licensed
-          mental health provider or local emergency services.<br/><br/>
-          <b>Intellectual Property Notice:</b> This demo edition and all card text, layouts,
-          and designs are the copyrighted work of Healing Minez. It is provided for personal
-          evaluation and use only. It may not be copied, resold, redistributed, or used for
-          commercial purposes, in whole or in part, without explicit written permission.
+          2. Pick a <b>deck</b> that fits the moment.<br/>
+          3. Click <b>Reveal Next Shift</b> and read the prompt slowly.<br/>
+          4. Answer out loud, in your mind, with a partner, or in a journal.<br/>
+          5. Whisper the affirmation softly or say it within a few times, feeling it in your body.<br/>
+          6. After a few cards, this demo will invite you to unlock the full Master Edition.
         </div>
 
         <div class="status" id="status-message">
-          Demo deck loaded. Reveal your first sample card when you’re ready.
+          Demo deck loaded. Reveal your first Shift when you’re ready.
+        </div>
+
+        <div class="legal-footer">
+          This demo is for reflection, emotional awareness, and conversation. It is not a
+          substitute for therapy, mental health treatment, or medical care. If you are in crisis
+          or need support, please contact a licensed professional or local emergency services.<br/><br/>
+          © Healing Minez. This demo and all card content are protected intellectual property.
+          This edition is for personal use and evaluation only and may not be copied, resold,
+          or redistributed without written permission. To access the full Master Edition, visit
+          <a href="https://payhip.com/b/azZex" target="_blank">Healing Minez on Payhip</a>.
         </div>
       </aside>
     </div>
   </div>
 
+  <!-- DEMO LIMIT POPUP -->
+  <div class="demo-overlay" id="demo-overlay">
+    <div class="demo-modal">
+      <h2>Demo Limit Reached</h2>
+      <p>
+        You’ve experienced a small taste of <b>The Shift – Master Edition</b>.  
+        This demo is limited to a few card draws so your nervous system doesn’t get overwhelmed,
+        and so you can feel the energy of the work.
+      </p>
+      <p>
+        The full version unlocks <b>all decks, full card libraries, and unlimited draws</b> for deeper
+        solo journeys, couples healing, and community circles.
+      </p>
+
+      <div class="demo-modal-actions">
+        <a href="https://payhip.com/b/azZex" target="_blank"
+           class="btn btn-primary btn-large">
+          ⭐ Unlock Full Master Edition
+        </a>
+        <button class="btn btn-secondary" id="demo-close-btn" type="button">
+          Close Demo Message
+        </button>
+      </div>
+
+      <div class="demo-modal-small">
+        You can refresh the page to re-experience the demo, but this version will stay limited.
+        For full access, deeper healing, and all 10+ decks, the Master Edition is available via Payhip.
+      </div>
+    </div>
+  </div>
+
   <script>
+    // ---- deck themes (icon + colors) ----
     const deckThemes = {
       soloInner: {
         icon: "🌙",
         accent: "#cab8ff",
         accentSoft: "#f3e9ff",
         accentDeep: "#5a4ad6"
+      },
+      groupCircle: {
+        icon: "🌿",
+        accent: "#b4d8c3",
+        accentSoft: "#e5f5ea",
+        accentDeep: "#2f6b4f"
       },
       couples: {
         icon: "💞",
@@ -644,6 +963,36 @@
         accent: "#ffcf8f",
         accentSoft: "#fff1d9",
         accentDeep: "#e08a00"
+      },
+      shadowWork: {
+        icon: "🌑",
+        accent: "#b38add",
+        accentSoft: "#f0e3ff",
+        accentDeep: "#4a024a"
+      },
+      compassion: {
+        icon: "✨",
+        accent: "#aedbff",
+        accentSoft: "#e3f4ff",
+        accentDeep: "#22648c"
+      },
+      reframe: {
+        icon: "🔄",
+        accent: "#ff9fb0",
+        accentSoft: "#ffe1e8",
+        accentDeep: "#d3546c"
+      },
+      becoming: {
+        icon: "🌟",
+        accent: "#dce2f0",
+        accentSoft: "#f2f4ff",
+        accentDeep: "#7178e6"
+      },
+      connection: {
+        icon: "🤝",
+        accent: "#ffb39a",
+        accentSoft: "#ffe1d8",
+        accentDeep: "#d1603a"
       },
       dualMode: {
         icon: "✧",
@@ -665,12 +1014,17 @@
       if (iconEl) iconEl.textContent = theme.icon;
     }
 
+    // ---- decks & cards ----
     const decks = {
+      // For brevity: same deck structure as your main Master Edition demo.
+      // (You can expand/adjust texts here exactly as before.)
+
+      // 1) Solo – Deep Inner Work
       soloInner: {
-        name: "Demo – Solo Inner Work",
+        name: "Solo – Deep Inner Work",
         mode: "solo",
         description:
-          "Sample prompts for emotional insight, self-awareness, and gentle inner work.",
+          "Deep emotional insight, self-awareness, inner healing, and truth-telling with yourself.",
         cards: [
           {
             category: "Emotional Check-In",
@@ -696,14 +1050,50 @@
             ],
             affirmation: "My body’s wisdom is sacred."
           }
+          // ... You can keep/add more cards here as in your full version
         ]
       },
 
-      couples: {
-        name: "Demo – Couples Healing",
+      // 2) Group / Circle
+      groupCircle: {
+        name: "Group / Circle – Connection & Conversation",
         mode: "group",
         description:
-          "Sample prompts for emotional safety, communication, and connection.",
+          "For circles, retreats, healing spaces, and honest group connection. Gentle but meaningful sharing.",
+        cards: [
+          {
+            category: "Opening",
+            level: "Soft",
+            prompt: "Share one word that describes how you arrived here today.",
+            note: "Your word doesn’t need to make sense — it just needs to be honest.",
+            steps: [
+              "Speak the word softly.",
+              "Let it be witnessed.",
+              "Take a breath together as a group."
+            ],
+            affirmation: "My presence here matters."
+          },
+          {
+            category: "Heart Check-In",
+            level: "Soft",
+            prompt: "If your heart had a color today, what color would it be — and why?",
+            note: "You can keep the “why” as simple or deep as you like.",
+            steps: [
+              "Name the color.",
+              "Share what it represents.",
+              "Listen without response."
+            ],
+            affirmation: "My heart speaks in many languages."
+          }
+        ]
+      },
+
+      // 3) Couples
+      couples: {
+        name: "Couples – Relationship Healing & Intimacy",
+        mode: "group",
+        description:
+          "For pairs and couples: emotional safety, communication, intimacy, and gentle repair.",
         cards: [
           {
             category: "Check-In",
@@ -718,25 +1108,26 @@
             affirmation: "We are learning how to hear each other."
           },
           {
-            category: "Appreciation",
-            level: "Soft",
-            prompt: "Name three things you genuinely appreciate about your partner this season.",
-            note: "Be specific and present-focused.",
+            category: "Love Language",
+            level: "Light",
+            prompt: "What is one way you most feel loved right now?",
+            note: "Try to be specific and current, not general.",
             steps: [
-              "Take turns sharing appreciations.",
-              "Let there be a pause after each one.",
-              "End with “thank you for seeing me.”"
+              "Each partner shares one example.",
+              "Name one small way you could offer that this week.",
+              "Thank each other."
             ],
-            affirmation: "We see each other with kindness."
+            affirmation: "We choose to speak each other’s hearts."
           }
         ]
       },
 
+      // 4) Inner Child
       innerChild: {
-        name: "Demo – Inner Child",
+        name: "Inner Child – Reparenting & Joy",
         mode: "any",
         description:
-          "Sample prompts to reconnect with younger you through softness and play.",
+          "Connect with younger you, understand unmet needs, reclaim joy, and practice reparenting.",
         cards: [
           {
             category: "Little You",
@@ -751,25 +1142,196 @@
             affirmation: "I welcome my younger self with love."
           },
           {
-            category: "Play",
-            level: "Light",
-            prompt: "What activity used to make you lose track of time as a child?",
-            note: "It might be drawing, dancing, imagining, or something small.",
+            category: "Unmet Need",
+            level: "Core",
+            prompt: "What did you long to hear or receive as a child that you rarely did?",
+            note: "You are not blaming; you are remembering.",
             steps: [
-              "Name the activity.",
-              "Decide one tiny way to revisit it this week.",
-              "Protect ten minutes for it."
+              "Name the need or phrase.",
+              "Say it to yourself now, in the present tense.",
+              "Let your body feel receiving it."
             ],
-            affirmation: "Joy is still allowed for me."
+            affirmation: "I can give myself what I once needed."
           }
         ]
       },
 
-      dualMode: {
-        name: "Demo – Universal",
+      // 5) Shadow Work
+      shadowWork: {
+        name: "Shadow Work – Deep Roots & Triggers",
         mode: "any",
         description:
-          "Timeless soul questions that work in solo, couples, or groups.",
+          "Gently explore triggers, old stories, and protective patterns with compassion and safety.",
+        cards: [
+          {
+            category: "Trigger",
+            level: "Deep",
+            prompt: "Describe a recent moment where your reaction felt bigger than the situation.",
+            note: "Big reactions often point toward old wounds.",
+            steps: [
+              "Recall what happened without shaming yourself.",
+              "Ask: “What did this remind me of?”",
+              "Notice the younger part that reacted."
+            ],
+            affirmation: "I can be curious about my triggers."
+          },
+          {
+            category: "Story",
+            level: "Core",
+            prompt: "What story about yourself shows up when you feel rejected or ignored?",
+            note: "Stories are learned, not facts.",
+            steps: [
+              "Name the story in one sentence.",
+              "Ask: “Where did I first learn this?”",
+              "Gently question if it’s fully true."
+            ],
+            affirmation: "I am more than my old stories."
+          }
+        ]
+      },
+
+      // 6) Compassion
+      compassion: {
+        name: "Compassion – Softening & Kindness",
+        mode: "any",
+        description:
+          "For nervous-system soothing, self-kindness, emotional safety, and soft inner talk.",
+        cards: [
+          {
+            category: "Inner Critic",
+            level: "Core",
+            prompt: "What is one sentence your inner critic keeps repeating lately?",
+            note: "We are not here to argue with it — only to understand.",
+            steps: [
+              "Write or say the sentence.",
+              "Ask: “What is this voice trying to protect me from?”",
+              "Thank it, then offer a softer sentence."
+            ],
+            affirmation: "I choose a kinder voice within me."
+          },
+          {
+            category: "Self-Soothing",
+            level: "Soft",
+            prompt: "When you feel overwhelmed, what is one healthy thing that reliably soothes you?",
+            note: "Soothing can be sound, touch, movement, or stillness.",
+            steps: [
+              "Name your soothing practice.",
+              "Plan to offer it to yourself this week.",
+              "Imagine how your body will feel receiving it."
+            ],
+            affirmation: "I am allowed to comfort myself."
+          }
+        ]
+      },
+
+      // 7) Mindset Reframe
+      reframe: {
+        name: "Mindset Reframe – Belief Shifts",
+        mode: "any",
+        description:
+          "Shift limiting beliefs into softer, truer, more empowering stories with compassion.",
+        cards: [
+          {
+            category: "Old Belief",
+            level: "Core",
+            prompt: "What is a belief about yourself that feels heavy or limiting right now?",
+            note: "We are not judging the belief — only noticing it.",
+            steps: [
+              "Write the belief in one sentence.",
+              "Ask: “Who taught me this?”",
+              "Ask: “Is it absolutely, always true?”"
+            ],
+            affirmation: "I am allowed to outgrow old beliefs."
+          },
+          {
+            category: "Reframe",
+            level: "Core",
+            prompt: "Take that heavy belief and rewrite it into a softer, more realistic truth.",
+            note: "Make it believable, not fake-positive.",
+            steps: [
+              "Keep your new sentence simple.",
+              "Check if your body relaxes even 5%.",
+              "Adjust until it feels a little lighter."
+            ],
+            affirmation: "I choose thoughts that honor my truth."
+          }
+        ]
+      },
+
+      // 8) Becoming
+      becoming: {
+        name: "Becoming – Future Self & Expansion",
+        mode: "any",
+        description:
+          "Step into who you’re becoming with identity shifts, expansion, and future-self guidance.",
+        cards: [
+          {
+            category: "Future Self",
+            level: "Core",
+            prompt: "Imagine yourself five years from now, healed and grounded. What is one thing they no longer tolerate?",
+            note: "Your future self has boundaries.",
+            steps: [
+              "Close your eyes and see them clearly.",
+              "Ask them what they’ve stopped accepting.",
+              "Write down their answer as guidance."
+            ],
+            affirmation: "I move toward the version of me I admire."
+          },
+          {
+            category: "Values",
+            level: "Soft",
+            prompt: "What are the top two values your future self lives by every day?",
+            note: "Values are your internal compass.",
+            steps: [
+              "Name the two values.",
+              "Ask: “How can I honor one of these today?”",
+              "Plan one aligned action."
+            ],
+            affirmation: "I live my life aligned with my values."
+          }
+        ]
+      },
+
+      // 9) Connection
+      connection: {
+        name: "Connection – Shared Moments & Presence",
+        mode: "any",
+        description:
+          "For friendships, families, teams, and circles. Builds warmth, presence, and emotional closeness.",
+        cards: [
+          {
+            category: "Presence",
+            level: "Soft",
+            prompt: "Who in your life makes you feel most seen, and why?",
+            note: "Let your heart remember the feeling.",
+            steps: [
+              "Name the person.",
+              "Describe one moment where you felt truly seen.",
+              "Consider telling them about it later."
+            ],
+            affirmation: "I am worthy of relationships where I am seen."
+          },
+          {
+            category: "Reaching Out",
+            level: "Light",
+            prompt: "Who have you been thinking about but not reaching out to?",
+            note: "Sometimes the gap is just a moment of courage.",
+            steps: [
+              "Name the person.",
+              "Decide on a simple message or gesture.",
+              "Plan when you’ll send it."
+            ],
+            affirmation: "I am allowed to reconnect with care."
+          }
+        ]
+      },
+
+      // 10) Universal
+      dualMode: {
+        name: "Universal – Any Mode Deck",
+        mode: "any",
+        description:
+          "Timeless soul questions that work in solo, couples, groups, journaling, or circles.",
         cards: [
           {
             category: "Current Chapter",
@@ -799,10 +1361,17 @@
       }
     };
 
+    // ---- state ----
     let mode = "solo";
     let currentDeckKey = "soloInner";
     let lastIndex = null;
 
+    // DEMO state
+    let drawCount = 0;
+    const DRAW_LIMIT = 3;
+
+    // ---- DOM ----
+    const appEl = document.querySelector(".app");
     const modeButtons = document.querySelectorAll(".mode-btn");
     const deckSelect = document.getElementById("deck-select");
     const deckDescriptionEl = document.getElementById("deck-description");
@@ -822,18 +1391,31 @@
     const gameCardEl = document.getElementById("game-card");
     const modeHintEl = document.getElementById("card-mode-hint");
 
+    const startOverlay = document.getElementById("start-overlay");
+    const startSoloBtn = document.getElementById("start-solo-btn");
+    const startGroupBtn = document.getElementById("start-group-btn");
+
+    const demoOverlay = document.getElementById("demo-overlay");
+    const demoCloseBtn = document.getElementById("demo-close-btn");
+
+    // ---- mode hint text ----
     function updateModeHint() {
       let text = "";
+
       if (mode === "solo") {
         text = "In Solo Mode, answer gently and honestly. You can speak out loud, write in a journal, or simply sit with what arises.";
+      } else if (currentDeckKey === "groupCircle") {
+        text = "In Group / Circle Mode, one person reads the card and shares. Others listen without fixing, rescuing, or correcting.";
       } else if (currentDeckKey === "couples") {
         text = "For Couples, let Partner A share while Partner B only listens. Then switch and reflect on what you heard with care.";
       } else {
         text = "In shared modes, you may answer, pass, or simply listen. Your presence in the space is already enough.";
       }
+
       modeHintEl.textContent = text;
     }
 
+    // ---- mode toggle ----
     function updateMode(newMode) {
       mode = newMode;
       modeButtons.forEach(btn => {
@@ -847,10 +1429,10 @@
           : "<b>Group / Circle Mode:</b> Take turns drawing cards. Share only what feels safe. This space is for curiosity, not judgment.";
 
       deckDescriptionEl.innerHTML =
-        `<b>${deck.name}:</b> ${deck.description}<br/><br/>${modeText}`;
+        `<b>${deck.name} (Demo):</b> ${deck.description}<br/><br/>${modeText}`;
 
       statusMessage.textContent =
-        `Mode: ${mode === "solo" ? "Solo" : "Group / Circle"}. This is a demo with limited cards.`;
+        `Mode: ${mode === "solo" ? "Solo" : "Group / Circle"}. This is a limited demo with a few sample cards.`;
 
       updateModeHint();
     }
@@ -861,6 +1443,7 @@
       });
     });
 
+    // ---- deck select ----
     deckSelect.addEventListener("change", () => {
       currentDeckKey = deckSelect.value;
       lastIndex = null;
@@ -872,15 +1455,16 @@
           : "<b>Group / Circle Mode:</b> Take turns drawing cards. Share only what feels safe. This space is for curiosity, not judgment.";
 
       deckDescriptionEl.innerHTML =
-        `<b>${deck.name}:</b> ${deck.description}<br/><br/>${modeText}`;
+        `<b>${deck.name} (Demo):</b> ${deck.description}<br/><br/>${modeText}`;
 
       applyDeckTheme(currentDeckKey);
       updateModeHint();
 
       statusMessage.textContent =
-        `Demo deck changed to “${deck.name}”. Click Reveal Next Demo Card to receive a sample prompt.`;
+        `Deck changed to “${deck.name}”. In this demo, you can draw a few sample cards to feel the energy.`;
     });
 
+    // ---- sparkles ----
     function triggerCardRevealMagic() {
       if (!gameCardEl) return;
       gameCardEl.classList.add("revealed");
@@ -898,7 +1482,7 @@
         "#ffffff"
       ];
 
-      for (let i = 0; i < 6; i++) {
+      for (let i = 0; i < 8; i++) {
         const spark = document.createElement("span");
         spark.className = "sparkle";
         spark.textContent =
@@ -914,7 +1498,37 @@
       }
     }
 
+    // ---- demo limit ----
+    function showDemoLimit() {
+      if (demoOverlay) {
+        demoOverlay.classList.add("active");
+      }
+      if (appEl) {
+        appEl.classList.add("demo-locked");
+      }
+      if (drawBtn) {
+        drawBtn.disabled = true;
+        drawBtn.textContent = "Demo limit reached";
+      }
+      statusMessage.textContent =
+        "Demo limit reached. Unlock the full Master Edition for unlimited access to all decks and cards.";
+    }
+
+    if (demoCloseBtn) {
+      demoCloseBtn.addEventListener("click", () => {
+        if (demoOverlay) demoOverlay.classList.remove("active");
+        // Keep the app in locked state and draw button disabled
+      });
+    }
+
+    // ---- draw & render card ----
     function drawCard() {
+      // Enforce demo limit
+      if (drawCount >= DRAW_LIMIT) {
+        showDemoLimit();
+        return;
+      }
+
       const deck = decks[currentDeckKey];
       if (!deck) {
         statusMessage.textContent = "No deck selected.";
@@ -923,13 +1537,13 @@
 
       if (deck.mode !== "any" && deck.mode !== mode) {
         statusMessage.textContent =
-          `This demo deck (${deck.name}) is designed for ${deck.mode === "solo" ? "Solo Mode" : "Group / Circle Mode"}. Switch modes or choose another demo deck.`;
+          `This deck (${deck.name}) is designed for ${deck.mode === "solo" ? "Solo Mode" : "Group / Circle Mode"}. Switch modes or choose another deck.`;
         return;
       }
 
       const availableCards = deck.cards;
       if (!availableCards || !availableCards.length) {
-        statusMessage.textContent = "This demo deck has no cards yet.";
+        statusMessage.textContent = "This deck has no cards yet in the demo.";
         return;
       }
 
@@ -942,8 +1556,15 @@
 
       lastIndex = index;
       const card = availableCards[index];
+      drawCount++;
+
       renderCard(card);
       triggerCardRevealMagic();
+
+      if (drawCount >= DRAW_LIMIT) {
+        // Slight delay so they can read the card, then show lock popup
+        setTimeout(showDemoLimit, 900);
+      }
     }
 
     function renderCard(card) {
@@ -971,7 +1592,7 @@
       affirmPlainEl.textContent = affirmationText;
 
       updateModeHint();
-      statusMessage.textContent = "Demo card revealed. Take your time with it.";
+      statusMessage.textContent = `Shift revealed. (${drawCount}/${DRAW_LIMIT} demo draws used)`;
     }
 
     drawBtn.addEventListener("click", drawCard);
@@ -979,9 +1600,33 @@
     reshuffleBtn.addEventListener("click", () => {
       lastIndex = null;
       statusMessage.textContent =
-        "Demo energy refreshed. Reveal your next sample card when you feel ready.";
+        "Energy refreshed. In this demo, your remaining draws are limited — use them when you feel ready.";
     });
 
+    // ---- start overlay ----
+    function hideStartOverlay() {
+      if (startOverlay) {
+        startOverlay.classList.add("hidden");
+      }
+    }
+
+    if (startSoloBtn) {
+      startSoloBtn.addEventListener("click", () => {
+        updateMode("solo");
+        applyDeckTheme(currentDeckKey);
+        hideStartOverlay();
+      });
+    }
+
+    if (startGroupBtn) {
+      startGroupBtn.addEventListener("click", () => {
+        updateMode("group");
+        applyDeckTheme(currentDeckKey);
+        hideStartOverlay();
+      });
+    }
+
+    // init
     applyDeckTheme(currentDeckKey);
     updateMode("solo");
   </script>
